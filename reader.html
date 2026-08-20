@@ -289,7 +289,7 @@ function toggleBars(){
 
 /* ---------- touch: swipe, pinch, double-tap ---------- */
 let touches = [], startDist = 0, startZoom = 1, pinching = false;
-let swipe = null, lastTap = 0, startScroll = [0,0];
+let swipe = null, lastTap = 0, startScroll = [0,0], lastTouchT = 0;
 
 function dist(t){ return Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY); }
 function mid(t){ return [(t[0].clientX + t[1].clientX)/2, (t[0].clientY + t[1].clientY)/2]; }
@@ -328,6 +328,7 @@ stage.addEventListener('touchmove', e => {
 }, {passive: false});
 
 stage.addEventListener('touchend', e => {
+  lastTouchT = Date.now();
   if (pinching && e.touches.length < 2) {
     pinching = false;
     const m = canvas.style.transform.match(/scale\(([\d.]+)\)/);
@@ -356,6 +357,19 @@ stage.addEventListener('touchend', e => {
     swipe = null;
   }
 }, {passive: true});
+
+/* mouse: click toggles bars, double-click zooms (desktop; touch handled above) */
+let clickTimer;
+stage.addEventListener('click', e => {
+  if (Date.now() - lastTouchT < 700) return;
+  clearTimeout(clickTimer);
+  clickTimer = setTimeout(toggleBars, 280);
+});
+stage.addEventListener('dblclick', e => {
+  if (Date.now() - lastTouchT < 700) return;
+  clearTimeout(clickTimer);
+  setZoom(zoom > 1.01 ? 1 : 2.2, e.clientX, e.clientY);
+});
 
 /* mouse wheel zoom (desktop) */
 stage.addEventListener('wheel', e => {
