@@ -38,23 +38,22 @@ vercel --prod
 
 > Note: GitHub blocks single files over 100 MB and Vercel deployments are capped in total size, but these PDFs (2–8 MB each) are far below any limit even with 30+ issues.
 
-## Adding the rest of your ~30 PDFs
+## Adding a new issue (easiest way — no tools needed)
 
-1. Copy each PDF into `pdfs/` named like this (number = issue number):
-   ```
-   pdfs/lundhwakha-122.pdf
-   pdfs/lundhwakha-123.pdf
-   ```
-2. Rebuild covers and the issue list (needs Python 3 + poppler-utils):
-   ```bash
-   python3 generate.py
-   ```
-   (macOS: `brew install poppler qpdf` · Ubuntu: `sudo apt install poppler-utils qpdf`)
-3. Redeploy (re-drag the folder, or `vercel --prod`, or git push).
+Everything is automated with GitHub Actions. When a new issue comes out:
 
-That's it — the new issues appear on the homepage automatically, newest first.
+1. Rename the PDF to `lundhwakha-<number>.pdf` (e.g. `lundhwakha-140.pdf` — lowercase, hyphen, no spaces).
+2. Go to https://github.com/bibek-magar/lundhwakha/tree/main/pdfs
+3. Click **Add file → Upload files**, drop the PDF in, click **Commit changes**.
+4. Wait ~2 minutes. Done — the cover thumbnail and issue list are generated automatically, and Vercel deploys the update. The new issue appears at the top of https://lundhwakha.vercel.app
 
-If you can't run the script, you can also add an entry to `issues.json` by hand and place a `covers/cover-122.jpg` image yourself.
+Notes: GitHub's web upload accepts files up to 25 MB (all issues so far fit). Works from a phone browser too.
+
+## Adding issues manually (alternative)
+
+1. Copy the PDF into `pdfs/` as `lundhwakha-<number>.pdf`
+2. Run `python3 generate.py` (needs Python 3 + poppler-utils + qpdf)
+3. Push to `main` — Vercel auto-deploys.
 
 ## Reader features
 
