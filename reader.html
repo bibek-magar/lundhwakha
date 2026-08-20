@@ -9,6 +9,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <style>
   * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
   html,body { height:100%; overscroll-behavior:none; }
@@ -66,7 +68,7 @@
   #pageinfo { flex:none; font-size:.92rem; font-weight:600; background:#d6171f; padding:3px 11px; border-radius:999px; }
 
   #controls { display:flex; align-items:center; gap:8px; }
-  #slider { flex:1; accent-color:#d6171f; height:26px; touch-action:pan-x; }
+  #slider { flex:1; accent-color:#d6171f; height:38px; touch-action:pan-x; cursor:pointer; }
   #zoomrow { display:flex; align-items:center; justify-content:center; gap:8px; margin-top:6px; }
   #zoomlvl { font-size:.85rem; min-width:52px; text-align:center; color:#cfe3f0; }
   .zbtn { width:44px; height:34px; font-size:1.1rem; }
@@ -91,6 +93,12 @@
   }
   #err { position:fixed; inset:0; z-index:40; display:none; align-items:center; justify-content:center; padding:24px; text-align:center; background:#0b2233; font-size:1.05rem; line-height:1.7; }
   #err a { color:#7fc0e8; }
+  #spin {
+    position:fixed; top:50%; left:50%; width:38px; height:38px; margin:-19px 0 0 -19px;
+    border:3px solid rgba(255,255,255,.25); border-top-color:#d6171f; border-radius:50%;
+    z-index:15; display:none; animation:sp .8s linear infinite; pointer-events:none;
+  }
+  @keyframes sp { to { transform:rotate(360deg); } }
 </style>
 </head>
 <body>
@@ -102,10 +110,12 @@
 <div id="err"></div>
 
 <div id="stage"><div id="pagewrap"><canvas id="pagecanvas"></canvas></div></div>
+<div id="spin"></div>
 
 <div id="topbar" class="bar">
   <button class="ibtn" id="back" aria-label="लिहाँ">‹</button>
   <div id="title">लुँध्वाखा</div>
+  <button class="ibtn" id="share" aria-label="सेयर यानादिसँ" title="सेयर" style="font-size:1rem;">⤴</button>
   <div id="pageinfo">–</div>
 </div>
 
@@ -123,7 +133,7 @@
   </div>
 </div>
 
-<div id="hint">स्वाइप यानाः पौ हिलादिसँ &middot; प्यान्च यानाः जुम</div>
+<div id="hint">स्वाइप वा सिथय् थिकाः पौ हिलादिसँ &middot; प्यान्च यानाः जुम</div>
 
 <script type="module">
 import * as pdfjsLib from './vendor/pdfjs/pdf.min.mjs';
@@ -178,7 +188,7 @@ async function boot(){
   }
 }
 
-function save(id, p){ try { localStorage.setItem('lw-page-' + id, p); } catch(e){} }
+function save(id, p){ try { localStorage.setItem('lw-page-' + id, p); localStorage.setItem('lw-last', JSON.stringify({id, p, t: Date.now()})); } catch(e){} }
 function restore(id){ try { return parseInt(localStorage.getItem('lw-page-' + id)); } catch(e){ return null; } }
 
 function computeFit(page){
@@ -200,9 +210,19 @@ async function renderInto(page, scale){
   return c;
 }
 
+let toastT;
+function toast(msg){
+  const h = $('hint');
+  h.textContent = msg;
+  h.style.opacity = 1;
+  clearTimeout(toastT);
+  toastT = setTimeout(() => h.style.opacity = 0, 1300);
+}
+
 async function renderPage(n, dir){
   if (rendering) { pendingPage = [n, dir]; return; }
   rendering = true;
+  const spinT = setTimeout(() => $('spin').style.display = 'block', 250);
   try {
     const page = await pdf.getPage(n);
     fitScale = computeFit(page);
@@ -220,7 +240,10 @@ async function renderPage(n, dir){
       canvas.classList.add(dir > 0 ? 'flip-next' : 'flip-prev');
     }
     updateUI();
+    if (dir && topbar.classList.contains('hidden')) toast(dev(pageNum) + ' / ' + dev(total));
   } finally {
+    clearTimeout(spinT);
+    $('spin').style.display = 'none';
     rendering = false;
     if (pendingPage) { const [p, d] = pendingPage; pendingPage = null; renderPage(p, d); }
   }
@@ -272,6 +295,13 @@ $('next').onclick = () => go(pageNum + 1, +1);
 $('zin').onclick  = () => setZoom(zoom + .5);
 $('zout').onclick = () => setZoom(zoom - .5);
 $('zfit').onclick = () => setZoom(1);
+$('share').onclick = async () => {
+  const url = location.origin + location.pathname + '?issue=' + issueId;
+  try {
+    if (navigator.share) await navigator.share({ title: document.title, url });
+    else { await navigator.clipboard.writeText(url); toast('लिंक कपी जुल'); }
+  } catch(e){}
+};
 $('slider').oninput = e => { $('pageinfo').textContent = dev(e.target.value) + ' / ' + dev(total); };
 $('slider').onchange = e => go(parseInt(e.target.value), parseInt(e.target.value) >= pageNum ? 1 : -1);
 
@@ -343,13 +373,18 @@ stage.addEventListener('touchend', e => {
     const dx = ct.clientX - swipe.x, dy = ct.clientY - swipe.y, dt = Date.now() - swipe.t;
     canvas.style.transform = '';
     if (!swipe.moved && dt < 300) {
-      const now = Date.now();
-      if (now - lastTap < 320) { // double tap
-        setZoom(zoom > 1.01 ? 1 : 2.2, ct.clientX, ct.clientY);
-        lastTap = 0;
-      } else {
-        lastTap = now;
-        setTimeout(() => { if (lastTap === now) toggleBars(); }, 330);
+      const W = window.innerWidth;
+      if (zoom <= 1.01 && ct.clientX < W * .17) { go(pageNum - 1, -1); lastTap = 0; }        // edge tap: prev
+      else if (zoom <= 1.01 && ct.clientX > W * .83) { go(pageNum + 1, +1); lastTap = 0; }   // edge tap: next
+      else {
+        const now = Date.now();
+        if (now - lastTap < 320) { // double tap
+          setZoom(zoom > 1.01 ? 1 : 2.2, ct.clientX, ct.clientY);
+          lastTap = 0;
+        } else {
+          lastTap = now;
+          setTimeout(() => { if (lastTap === now) toggleBars(); }, 330);
+        }
       }
     } else if (zoom <= 1.01 && Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy) * 1.4 && dt < 600) {
       if (dx < 0) go(pageNum + 1, +1); else go(pageNum - 1, -1);
@@ -363,7 +398,10 @@ let clickTimer;
 stage.addEventListener('click', e => {
   if (Date.now() - lastTouchT < 700) return;
   clearTimeout(clickTimer);
-  clickTimer = setTimeout(toggleBars, 280);
+  const W = window.innerWidth;
+  if (zoom <= 1.01 && e.clientX < W * .17) go(pageNum - 1, -1);
+  else if (zoom <= 1.01 && e.clientX > W * .83) go(pageNum + 1, +1);
+  else clickTimer = setTimeout(toggleBars, 280);
 });
 stage.addEventListener('dblclick', e => {
   if (Date.now() - lastTouchT < 700) return;
@@ -375,6 +413,9 @@ stage.addEventListener('dblclick', e => {
 stage.addEventListener('wheel', e => {
   if (e.ctrlKey) { e.preventDefault(); setZoom(zoom + (e.deltaY < 0 ? .3 : -.3), e.clientX, e.clientY); }
 }, {passive: false});
+
+/* stop iOS Safari page-level pinch zoom (it ignores user-scalable=no) */
+document.addEventListener('gesturestart', e => e.preventDefault());
 
 let rT; window.addEventListener('resize', () => { clearTimeout(rT); rT = setTimeout(() => { cache.clear(); renderPage(pageNum); }, 200); });
 

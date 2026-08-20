@@ -10,6 +10,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <style>
   * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
   html { -webkit-text-size-adjust:100%; }
@@ -66,6 +68,23 @@
     color:#fff; font-size:.85rem; font-weight:600; padding:5px 14px; border-radius:8px;
   }
   .loading { text-align:center; color:#68808f; padding:60px 0; font-size:1rem; }
+  a.resume {
+    display:flex; align-items:center; gap:14px; text-decoration:none; color:inherit;
+    background:#fff; border-radius:14px; padding:12px 14px; margin-bottom:22px;
+    border-left:5px solid #d6171f;
+    box-shadow:0 2px 8px rgba(13,78,118,.15), 0 6px 18px rgba(13,78,118,.10);
+  }
+  a.resume:active { transform:scale(.98); }
+  a.resume img { width:52px; height:72px; object-fit:cover; border-radius:6px; flex:none; }
+  a.resume .rt { flex:1; min-width:0; }
+  a.resume .r1 { font-weight:700; color:#d6171f; font-size:.95rem; }
+  a.resume .r2 { font-weight:700; color:#0d4e76; font-size:1.05rem; margin-top:2px; }
+  a.resume .r3 { color:#68808f; font-size:.85rem; }
+  a.resume .go {
+    flex:none; background:linear-gradient(115deg,#0d4e76,#1d6499); color:#fff;
+    font-weight:700; font-size:1.3rem; width:42px; height:42px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+  }
   footer { text-align:center; color:#8aa0ad; font-size:.8rem; padding:18px 12px 34px; }
 </style>
 </head>
@@ -75,6 +94,7 @@
 </header>
 <div class="strip">‘लुँध्वाखा’ नेपालभाषाया बाखं स्वलापौ — सकल अंक थन ब्वनादिसँ</div>
 <main>
+  <div id="resume"></div>
   <h2 class="sec">दक्व अंक</h2>
   <div id="grid" class="grid"><div class="loading">लोड जुया च्वंगु दु…</div></div>
 </main>
@@ -82,6 +102,23 @@
 <script>
 const dev = n => String(n).replace(/\d/g, d => "०१२३४५६७८९"[d]);
 fetch('issues.json').then(r => r.json()).then(({issues}) => {
+  // "continue reading" card from last-read position
+  try {
+    const last = JSON.parse(localStorage.getItem('lw-last'));
+    const li = last && issues.find(i => i.id === String(last.id));
+    if (li && last.p > 1) {
+      document.getElementById('resume').innerHTML = `
+        <a class="resume" href="reader.html?issue=${li.id}&page=${last.p}">
+          <img src="${li.cover}" alt="">
+          <div class="rt">
+            <div class="r1">लिपां ब्वनेगु ›</div>
+            <div class="r2">${li.title}</div>
+            <div class="r3">पौ ${dev(last.p)} / ${dev(li.pages)}</div>
+          </div>
+          <span class="go">›</span>
+        </a>`;
+    }
+  } catch(e){}
   const g = document.getElementById('grid');
   g.innerHTML = issues.map(i => `
     <a class="card" href="reader.html?issue=${i.id}">
