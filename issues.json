@@ -1,6 +1,97 @@
 {
   "issues": [
     {
+      "id": "139",
+      "title": "लुँध्वाखा १३९",
+      "file": "pdfs/lundhwakha-139.pdf",
+      "cover": "covers/cover-139.jpg",
+      "pages": 80
+    },
+    {
+      "id": "138",
+      "title": "लुँध्वाखा १३८",
+      "file": "pdfs/lundhwakha-138.pdf",
+      "cover": "covers/cover-138.jpg",
+      "pages": 80
+    },
+    {
+      "id": "136",
+      "title": "लुँध्वाखा १३६",
+      "file": "pdfs/lundhwakha-136.pdf",
+      "cover": "covers/cover-136.jpg",
+      "pages": 78
+    },
+    {
+      "id": "133",
+      "title": "लुँध्वाखा १३३",
+      "file": "pdfs/lundhwakha-133.pdf",
+      "cover": "covers/cover-133.jpg",
+      "pages": 80
+    },
+    {
+      "id": "131",
+      "title": "लुँध्वाखा १३१",
+      "file": "pdfs/lundhwakha-131.pdf",
+      "cover": "covers/cover-131.jpg",
+      "pages": 64
+    },
+    {
+      "id": "130",
+      "title": "लुँध्वाखा १३०",
+      "file": "pdfs/lundhwakha-130.pdf",
+      "cover": "covers/cover-130.jpg",
+      "pages": 76
+    },
+    {
+      "id": "129",
+      "title": "लुँध्वाखा १२९",
+      "file": "pdfs/lundhwakha-129.pdf",
+      "cover": "covers/cover-129.jpg",
+      "pages": 66
+    },
+    {
+      "id": "127",
+      "title": "लुँध्वाखा १२७",
+      "file": "pdfs/lundhwakha-127.pdf",
+      "cover": "covers/cover-127.jpg",
+      "pages": 58
+    },
+    {
+      "id": "126",
+      "title": "लुँध्वाखा १२६",
+      "file": "pdfs/lundhwakha-126.pdf",
+      "cover": "covers/cover-126.jpg",
+      "pages": 60
+    },
+    {
+      "id": "125",
+      "title": "लुँध्वाखा १२५",
+      "file": "pdfs/lundhwakha-125.pdf",
+      "cover": "covers/cover-125.jpg",
+      "pages": 68
+    },
+    {
+      "id": "124",
+      "title": "लुँध्वाखा १२४",
+      "file": "pdfs/lundhwakha-124.pdf",
+      "cover": "covers/cover-124.jpg",
+      "pages": 80
+    },
+    {
+      "id": "123",
+      "title": "लुँध्वाखा १२३",
+      "file": "pdfs/lundhwakha-123.pdf",
+      "cover": "covers/cover-123.jpg",
+      "pages": 68
+    },
+    {
+      "id": "122",
+      "title": "लुँध्वाखा १२२",
+      "file": "pdfs/lundhwakha-122.pdf",
+      "cover": "covers/cover-122.jpg",
+      "pages": 68
+    },
+    {
       "id": "121",
       "title": "लुँध्वाखा १२१",
       "file": "pdfs/lundhwakha-121.pdf",
