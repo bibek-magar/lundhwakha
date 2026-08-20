@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="new">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0d4e76">
+<title>लुँध्वाखा — नेपालभाषाया बाखं स्वलापौ</title>
+<meta name="description" content="लुँध्वाखा — नेपालभाषाया बाखं स्वलापौ। सकल अंक थन ब्वनादिसँ।">
+<link rel="icon" type="image/png" href="assets/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html { -webkit-text-size-adjust:100%; }
+  body {
+    font-family:'Noto Sans Devanagari','Mukta',system-ui,sans-serif;
+    background:#f2f5f8; color:#1c2b36; min-height:100vh;
+  }
+  header {
+    background:linear-gradient(115deg,#0d4e76 0%,#1d6499 55%,#3f809c 100%);
+    padding:calc(14px + env(safe-area-inset-top)) 16px 18px;
+    text-align:center;
+    border-bottom:5px solid #d6171f;
+  }
+  header img.logo {
+    width:min(480px,92%); height:auto; display:block; margin:0 auto;
+    filter:drop-shadow(0 2px 6px rgba(0,0,0,.25));
+  }
+  .strip {
+    background:#0d4e76; color:#cfe3f0; font-size:.85rem;
+    text-align:center; padding:7px 12px;
+  }
+  main { max-width:1080px; margin:0 auto; padding:20px 14px 48px; }
+  h2.sec {
+    font-size:1.15rem; color:#0d4e76; margin:4px 2px 14px;
+    display:flex; align-items:center; gap:10px;
+  }
+  h2.sec::after { content:""; flex:1; height:2px; background:linear-gradient(90deg,#d6171f,transparent); border-radius:2px; }
+  .grid {
+    display:grid; gap:16px;
+    grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
+  }
+  @media (min-width:640px){ .grid{ grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:20px; } }
+  a.card {
+    text-decoration:none; color:inherit; background:#fff;
+    border-radius:12px; overflow:hidden;
+    box-shadow:0 1px 4px rgba(13,78,118,.12), 0 4px 14px rgba(13,78,118,.08);
+    transition:transform .15s ease, box-shadow .15s ease;
+    display:flex; flex-direction:column;
+  }
+  a.card:active { transform:scale(.97); }
+  @media (hover:hover){ a.card:hover { transform:translateY(-3px); box-shadow:0 4px 10px rgba(13,78,118,.18), 0 10px 26px rgba(13,78,118,.14); } }
+  .covwrap { position:relative; aspect-ratio:210/297; background:#e5ecf1; }
+  .covwrap img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; }
+  .badge {
+    position:absolute; top:8px; right:8px; background:#d6171f; color:#fff;
+    font-size:.78rem; font-weight:700; padding:2px 9px; border-radius:999px;
+    box-shadow:0 1px 4px rgba(0,0,0,.3);
+  }
+  .meta { padding:10px 12px 12px; }
+  .meta .t { font-weight:700; font-size:1rem; color:#0d4e76; line-height:1.3; }
+  .meta .p { font-size:.8rem; color:#68808f; margin-top:2px; }
+  .read {
+    margin-top:8px; display:inline-block; background:linear-gradient(115deg,#0d4e76,#1d6499);
+    color:#fff; font-size:.85rem; font-weight:600; padding:5px 14px; border-radius:8px;
+  }
+  .loading { text-align:center; color:#68808f; padding:60px 0; font-size:1rem; }
+  footer { text-align:center; color:#8aa0ad; font-size:.8rem; padding:18px 12px 34px; }
+</style>
+</head>
+<body>
+<header>
+  <img class="logo" src="assets/logo.png" alt="लुँध्वाखा">
+</header>
+<div class="strip">‘लुँध्वाखा’ नेपालभाषाया बाखं स्वलापौ — सकल अंक थन ब्वनादिसँ</div>
+<main>
+  <h2 class="sec">दक्व अंक</h2>
+  <div id="grid" class="grid"><div class="loading">लोड जुया च्वंगु दु…</div></div>
+</main>
+<footer>लुँध्वाखा &middot; नेपालभाषाया बाखं स्वलापौ</footer>
+<script>
+const dev = n => String(n).replace(/\d/g, d => "०१२३४५६७८९"[d]);
+fetch('issues.json').then(r => r.json()).then(({issues}) => {
+  const g = document.getElementById('grid');
+  g.innerHTML = issues.map(i => `
+    <a class="card" href="reader.html?issue=${i.id}">
+      <div class="covwrap">
+        <img src="${i.cover}" alt="${i.title}" loading="lazy">
+        <span class="badge">${dev(i.id)}</span>
+      </div>
+      <div class="meta">
+        <div class="t">${i.title}</div>
+        <div class="p">${dev(i.pages)} पौ</div>
+        <span class="read">ब्वनेगु ›</span>
+      </div>
+    </a>`).join('');
+}).catch(() => {
+  document.getElementById('grid').innerHTML = '<div class="loading">अंक लोड मजुल — कृपया हानं कोसिस यानादिसँ।</div>';
+});
+</script>
+</body>
+</html>
