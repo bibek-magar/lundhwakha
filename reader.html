@@ -232,6 +232,9 @@ function updateUI(){
   $('prev').disabled = pageNum <= 1;
   $('next').disabled = pageNum >= total;
   $('zoomlvl').textContent = dev(Math.round(zoom * 100)) + '%';
+  $('zin').disabled = zoom >= MAXZOOM - .01;
+  $('zout').disabled = zoom <= MINZOOM + .01;
+  $('zfit').disabled = zoom <= MINZOOM + .01;
   const url = new URL(location); url.searchParams.set('issue', issueId || ''); url.searchParams.set('page', pageNum);
   history.replaceState(null, '', url);
   save(issueId, pageNum);
