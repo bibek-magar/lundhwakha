@@ -15,10 +15,24 @@
       "pages": 80
     },
     {
+      "id": "137",
+      "title": "लुँध्वाखा १३७",
+      "file": "pdfs/lundhwakha-137.pdf",
+      "cover": "covers/cover-137.jpg",
+      "pages": 76
+    },
+    {
       "id": "136",
       "title": "लुँध्वाखा १३६",
       "file": "pdfs/lundhwakha-136.pdf",
       "cover": "covers/cover-136.jpg",
+      "pages": 78
+    },
+    {
+      "id": "135",
+      "title": "लुँध्वाखा १३५",
+      "file": "pdfs/lundhwakha-135.pdf",
+      "cover": "covers/cover-135.jpg",
       "pages": 78
     },
     {
@@ -131,7 +145,7 @@
       "title": "लुँध्वाखा ११६",
       "file": "pdfs/lundhwakha-116.pdf",
       "cover": "covers/cover-116.jpg",
-      "pages": 53
+      "pages": 58
     },
     {
       "id": "115",
