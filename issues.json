@@ -1,6 +1,13 @@
 {
   "issues": [
     {
+      "id": "140",
+      "title": "लुँध्वाखा १४०",
+      "file": "pdfs/lundhwakha-140.pdf",
+      "cover": "covers/cover-140.jpg",
+      "pages": 80
+    },
+    {
       "id": "139",
       "title": "लुँध्वाखा १३९",
       "file": "pdfs/lundhwakha-139.pdf",
